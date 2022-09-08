@@ -1,0 +1,70 @@
+.successImg {
+    object-fit: scale-down;
+    height: 20rem;
+}
+
+.textDiv {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 3%;
+    height: 35%;
+}
+
+.textSuccessH1 {
+    font-size: 1.8rem;
+}
+
+.textSuccessP {
+    margin-top: -10px;
+    font-weight: 300;
+    overflow: hidden;
+    white-space: nowrap; /* Don't forget this one */
+    text-overflow: ellipsis;
+    max-width: 80%;
+    color: black;
+    text-decoration: none;
+}
+
+.buttonSuccess {
+    margin-bottom: 5%;
+    margin-top: auto;
+    padding: 15px 15% 15px 15%;
+    border: solid 2px #0075FF;
+    border-radius: 10px;
+    background-color: #0075FF;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+
+.buttonSuccess:hover {
+    margin-bottom: 5%;
+    margin-top: auto;
+    padding: 15px 15% 15px 15%;
+    border-radius: 10px;
+    background-color: white;
+    color: #0075FF;
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+
+
+// Error
+
+.ErrorPage {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.ErrorHeader {
+    margin-top: 15rem;
+    text-align: center;
+    color: rgb(182, 27, 27);
+    font-size: 1.8rem;
+}
+
+.errorButton {
+    margin-top: 5rem;
+}

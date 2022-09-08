@@ -1,0 +1,119 @@
+.CurrencyGrid {
+  display: flex;
+  margin-left: 30px;
+  margin-right: 30px;
+  justify-content: center;
+  margin-top: 5%;
+}
+
+.fontCurrencys {
+  display: flex;
+  align-items: center;
+  font-size: 1.3rem;
+  font-weight: 500;
+  background-color: rgb(5, 93, 238, 0.23);
+  border: solid 1.5px black;
+  border-radius: 10px;
+  padding: 5px 10px 5px 10px;
+  color: black;
+}
+
+.ethLogo {
+  margin-right: 5px;
+}
+
+.buttons {
+  display: flex;
+  margin-left: 30px;
+  margin-right: 30px;
+  justify-content: space-between;
+  margin-top: auto;
+  margin-bottom: 3%;
+}
+
+.buttonCancel {
+  padding: 10px 10% 10px 10%;
+  font-size: 1.5rem;
+  font-weight: 450;
+  color: #345eee;
+  border: solid 2px #345eee;
+  border-radius: 10px;
+  background-color: white;
+}
+
+.buttonCancel:hover {
+  padding: 10px 10% 10px 10%;
+  font-size: 1.5rem;
+  font-weight: 450;
+  color: white;
+  border: solid 2px #345eee;
+  border-radius: 10px;
+  background-color: #345eee;
+}
+
+.buttonConfirm {
+  padding: 10px 10% 10px 10%;
+  font-size: 1.5rem;
+  font-weight: 450;
+  color: white;
+  border: solid 2px #345eee;
+  border-radius: 10px;
+  background-color: #345eee;
+}
+
+.buttonConfirm:hover {
+  padding: 10px 10% 10px 10%;
+  font-size: 1.5rem;
+  font-weight: 450;
+  color: #345eee;
+  border: solid 2px #345eee;
+  border-radius: 10px;
+  background-color: white;
+}
+
+.loadingCard {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.ToS_1 {
+  margin-left: 40px;
+  margin-bottom: 20px;
+}
+
+.lds-ring {
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+.lds-ring div {
+  box-sizing: border-box;
+  display: block;
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  margin: 8px;
+  border: 8px solid black;
+  border-radius: 50%;
+  animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  border-color: black transparent transparent transparent;
+}
+.lds-ring div:nth-child(1) {
+  animation-delay: -0.45s;
+}
+.lds-ring div:nth-child(2) {
+  animation-delay: -0.3s;
+}
+.lds-ring div:nth-child(3) {
+  animation-delay: -0.15s;
+}
+@keyframes lds-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

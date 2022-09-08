@@ -1,0 +1,9 @@
+{
+  email philipp.storz@t-online.de
+}
+
+receipt-nft.yokupass.com {
+ 
+  reverse_proxy http://127.0.0.1:6600  
+  
+}

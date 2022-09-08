@@ -1,0 +1,48 @@
+.receiptData {
+    display: flex;
+   border-radius: 10px;
+    margin-left: 30px;
+    margin-right: 30px;
+    background-color: #EFF2F6;
+    height: 65%;
+    margin-bottom: 10px;
+    flex-direction: column;
+    margin-top: -20px;
+}
+
+.receiptNFTdata {
+    margin-left: 20px;
+    margin-top: 10px;
+    font-weight: 500;
+    margin-bottom: 30px;
+}
+
+.NFTdata {
+    margin-left: 20px;
+    margin-top: -25px;
+    margin-right: 20px;
+}
+
+.pData {
+    overflow: hidden;
+    white-space: nowrap; /* Don't forget this one */
+    text-overflow: ellipsis;
+    padding: 0;
+    margin: 0;
+    font-weight: 400;
+    color: black;
+    text-decoration: none;
+}
+
+.a {
+    text-decoration: none;
+    color: black;
+}
+
+.a:hover {
+    color: #0075FF;
+}
+
+.pDataTitle {
+    font-weight: 500;
+}
