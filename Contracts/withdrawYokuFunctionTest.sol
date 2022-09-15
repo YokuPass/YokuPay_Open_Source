@@ -5,6 +5,9 @@ pragma solidity ^0.8.7.0;
 import "@chainlink/contracts/src/v0.8/ChainlinkClient.sol";
 import "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol";
 
+//this contract is the Processing.sol contract, but stripped of everything that is not vital for testing the withdrawYoku() function
+//also the access to the function and variables are set to public, to enable unit tests
+
 contract withdrawYokuFunctionTest  {
     
     uint public payBack;

@@ -3,6 +3,8 @@ const Web3 = require("web3");
 const web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:7545"));
 const linktokenInterface = require("@chainlink/contracts/abi/v0.8/LinkTokenInterface.json");
 
+//each test should be run individually
+
 contract("withdrawYokuFunctionTest", (accounts) => {
   it("should do the calculation for collateral correctly - 1.5% price increase in the ExchangeRate", async () => {
     const processingInstance = await Processing.deployed();
