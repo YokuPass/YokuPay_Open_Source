@@ -105,7 +105,7 @@ contract Processing is ChainlinkClient, ConfirmedOwner {
 
                 if (priceIncrease < 200) { //the price increase is under 2%, we need to calculate how much of the collateral can be sent back
                     
-                    payBack = (priceIncrease * collateral) / 200;
+                    payBack = collateral - ((priceIncrease * collateral) / 200);
 
                     if (sendEther(payable(userwallet), payBack)){
                         userMap[userwallet].balance = userMap[userwallet].balance - payBack;
