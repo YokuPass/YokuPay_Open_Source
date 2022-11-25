@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { useLocation } from "react-router-dom";
 import jwtDecoder from "jwt-decode";
 
 import ErrorPage from "./pages/error/ErrorPage";
 import Connect from "./pages/process/Connect";
-import Checkout from "./pages/checkout/Checkout";
-import ReceiptNFT from "./pages/receiptNFT/ReceiptNFT";
 import Success from "./pages/success/Success";
 import Landing from "./pages/process/Landing";
 import TermsAndConditions from "./pages/legal/TermsAndConditions";
 import PrivacyPolicy from "./pages/legal/PrivacyPolicy";
+
 
 import getCookie from "./hooks/getCookie";
 
@@ -25,6 +23,10 @@ function App() {
   const [billingNFT, setBillingNFT] = useState("");
   const [contractTransactionHash, setContractTransactionHash] = useState("");
   const [orderID, setOrderID] = useState("");
+  const [nftURL, setNFTurl] = useState("")
+  const [assetID, setAssetID] = useState("")
+  const [stakeAddress, setStakeAddress] = useState("")
+
   //Connect
   const [fees, setFees] = useState();
   const [dollarAmount, setDollarAmount] = useState(0);
@@ -42,14 +44,12 @@ function App() {
       const decode = jwtDecoder(getCookie("y_wt"));
 
       if (decode) {
-        setNFTcontract(decode.nftcontract);
-        setMarketID(decode.marketid);
-        setTokenID(decode.tokenid);
-        setNftName(decode.name);
-        setStorePrice(decode.wei);
-        setEndPoint(decode.endpoint);
-        setStoreID(decode.storeid);
-        setOrderID(decode.orderid);
+        setAssetID(decode.AssetID);
+        setNftName(decode.Name);
+        setStorePrice(decode.Wei);
+        setEndPoint(decode.Endpoint);
+        setStoreID(decode.StoreID);
+        setOrderID(decode.Orderid);
         console.log(decode);
       } else {
         console.log("Error, cannot decode Json WebToken");
@@ -61,7 +61,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route
-          path="/payment/:storeid/:orderid/connect/:tokenid/:nftcontract"
+          path="/payment/:storeid/:orderid/connect/:assetID"
           element={
             <Connect
               setNFTcontract={setNFTcontract}
@@ -90,72 +90,17 @@ function App() {
               setCryptoAmount={setCryptoAmount}
               setDollarAmount={setDollarAmount}
               setFees={setFees}
+              setNFTurl={setNFTurl}
+              nftURL={nftURL}
+              setAssetID={setAssetID}
+              assetID={assetID}
+              setStakeAddress={setStakeAddress}
+              stakeAddress={stakeAddress}
             />
           }
         />
         <Route
-          path="/payment/:storeid/:orderid/checkout/:tokenid/:nftcontract"
-          element={
-            <Checkout
-              setNFTcontract={setNFTcontract}
-              setMarketID={setMarketID}
-              setTokenID={setTokenID}
-              setNftName={setNftName}
-              setStorePrice={setStorePrice}
-              setOrderID={setOrderID}
-              setEndPoint={setEndPoint}
-              setStoreID={setStoreID}
-              fees={fees}
-              dollarAmount={dollarAmount}
-              cryptoAmount={cryptoAmount}
-              currency={currency}
-              tokenID={tokenID}
-              nftName={nftName}
-              nftContract={nftContract}
-              marketID={marketID}
-              receiveAddress={receiveAddress}
-              payAddress={payAddress}
-              setBillingNFT={setBillingNFT}
-              storeID={storeID}
-              orderID={orderID}
-              setReceiveAddress={setReceiveAddress}
-              setPayAddress={setPayAddress}
-              setCryptoAmount={setCryptoAmount}
-              setDollarAmount={setDollarAmount}
-              setFees={setFees}
-              storePrice={storePrice}
-            />
-          }
-        />
-        <Route
-          path="/payment/:storeid/:orderid/receiptNFT/:tokenid/:nftcontract"
-          element={
-            <ReceiptNFT
-              setNFTcontract={setNFTcontract}
-              setMarketID={setMarketID}
-              setTokenID={setTokenID}
-              setNftName={setNftName}
-              setStorePrice={setStorePrice}
-              setOrderID={setOrderID}
-              setEndPoint={setEndPoint}
-              setStoreID={setStoreID}
-              nftContract={nftContract}
-              marketID={marketID}
-              payAddress={payAddress}
-              receiveAddress={receiveAddress}
-              orderID={orderID}
-              billingNFT={billingNFT}
-              setContractTransactionHash={setContractTransactionHash}
-              storeID={storeID}
-              setReceiveAddress={setReceiveAddress}
-              setPayAddress={setPayAddress}
-              setBillingNFT={setBillingNFT}
-              storePrice={storePrice}
-            />
-          }
-        />
-        <Route
-          path="/payment/:storeid/:orderid/success/:tokenid/:nftcontract"
+          path="/payment/:storeid/:orderid/success/:assetid"
           element={
             <Success
               setNFTcontract={setNFTcontract}
@@ -171,6 +116,12 @@ function App() {
               endPoint={endPoint}
               setContractTransactionHash={setContractTransactionHash}
               setBillingNFT={setBillingNFT}
+              nftName={nftName}
+              tokenID={tokenID}
+              setNFTurl={setNFTurl}
+              nftURL={nftURL}
+              setAssetID={setAssetID}
+              assetID={assetID}
             />
           }
         />
@@ -186,6 +137,9 @@ function App() {
               setOrderID={setOrderID}
               setEndPoint={setEndPoint}
               setStoreID={setStoreID}
+              setNFTurl={setNFTurl}
+              nftURL={nftURL}
+              setAssetID={setAssetID}
             />
           }
         />

@@ -20,6 +20,8 @@ const { pool } = require("./function/Database");
 const gernerateJWT = require("./function/genJWT").gernerateJWT;
 const buyNFT = require("./function/openTheta_buyNFT").BuyNFT;
 
+let web3 = [];
+
 expressApp.use(cors());
 expressApp.use(express.json());
 expressApp.use(
@@ -32,7 +34,6 @@ expressApp.post("/yokupay/jpg/receiptNFT", async (req, res) => {
   const securityCheck = await checkToken(req);
   console.log(securityCheck);
   if (securityCheck === true) {
-    const PolicyID = req.body.policyId;
     const AssetID = req.body.assetId;
     const CardanoAddress = req.body.cardanoAddress;
     const EthereumAddress = req.body.ethereumAddress;
@@ -41,7 +42,6 @@ expressApp.post("/yokupay/jpg/receiptNFT", async (req, res) => {
     const ExchangeRate = req.body.exchangeRate;
     const Amount = req.body.amount;
     if (
-      PolicyID !== undefined &&
       AssetID !== undefined &&
       CardanoAddress !== undefined &&
       EthereumAddress !== undefined &&
@@ -56,7 +56,6 @@ expressApp.post("/yokupay/jpg/receiptNFT", async (req, res) => {
 
       main(
         {
-          PolicyID,
           AssetID,
           CardanoAddress,
           CardanoStakeAddress,
@@ -167,11 +166,13 @@ expressApp.post("/yokupay/jwt", async (req, res) => {
     endpoint: req.body.Endpoint,
     storeid: req.body.StoreID,
     orderid: req.body.OrderID,
+    url: req.body.url,
   };
 
   console.log(data);
 
   gernerateJWT(data).then(async (token) => {
+    console.log(token);
     try {
       const addOrder = await pool.query(
         `INSERT INTO open_orders (order_id, token) VALUES ('${req.body.OrderID}', '${token}')`
@@ -187,89 +188,63 @@ expressApp.post("/yokupay/jwt", async (req, res) => {
   });
 });
 
-expressApp.post("/yokupay/jpg/fees", async (req, res) => {
+expressApp.post("/yokupay/jpg/jwt", async (req, res) => {
+  const data = {
+    assetid: req.body.AssetID,
+    name: req.body.Name,
+    wei: req.body.Wei,
+    endpoint: req.body.Endpoint,
+    storeid: req.body.StoreID,
+    orderid: req.body.OrderID,
+    url: req.body.url,
+  };
+
+  console.log(data);
+
+  gernerateJWT(data).then(async (token) => {
+    console.log(token);
+    try {
+      const addOrder = await pool.query(
+        `INSERT INTO open_orders (order_id, token) VALUES ('${req.body.OrderID}', '${token}')`
+      );
+
+      if (addOrder) {
+        res.send({ token });
+      }
+    } catch (error) {
+      console.log(error);
+      res.send(error);
+    }
+  });
+});
+
+expressApp.post("/yokupay/fees", async (req, res) => {
   // res.send(req.body.lovelace);
-  console.log(req.body.lovelace);
+  console.log(req.body.price);
+  console.log(req.body.from);
+  console.log(req.body.to);
   const securityCheck = await checkToken(req);
   console.log(securityCheck);
   if (securityCheck === true) {
-    if (req.body.lovelace > 0 || req.body.lovelace !== undefined) {
-      const price = req.body.lovelace;
-      const priceNumber = parseFloat(price);
-      const ADAamount = priceNumber / 1000000;
+    if (
+      req.body.price > 0 ||
+      req.body.from !== undefined ||
+      req.body.to !== undefined
+    ) {
+      const price = Number(req.body.price);
+      const fees = await getFees(price, req.body.from, req.body.to);
 
-      //get current ADA-ETh price
-      const conversion = await getCurrentADAETHprice();
-      const ETH_first = toNumberString(ADAamount * conversion);
+      if (fees !== {}) {
+        res.status(200).send(fees);
+      } else {
+        const errorResponse = {
+          message: "Invalide Input",
+        };
 
-      //get USD price
-      const ETH_USD = await getCurrentETHUSDprice();
-      const USD_number_lang = parseFloat(ETH_USD);
-      const USD_number = USD_number_lang.toFixed(2);
-
-      // Fees
-      const paymentprocess_prozent = ETH_first * 1.01 * 1.006;
-      const paymentprocess = paymentprocess_prozent + 0.0055 + 0.0028 + 0.0044;
-      const finalETH = (paymentprocess * 1.02).toFixed(5);
-      const collateral_fee = (paymentprocess * 0.02).toFixed(5);
-      const yokupay_fee = (ETH_first * 0.01).toFixed(5);
-
-      // Fees in percent
-
-      const percent = paymentprocess - ETH_first;
-      const percent_2 = percent.toFixed(5);
-      const percent_1 = ETH_first / 100;
-      const percent_final = (percent / percent_1).toFixed(2);
-
-      // Set Values
-      const ETH = toNumberString(finalETH);
-      const collateral_fee_1 = toNumberString(collateral_fee);
-      const yokupay_fee_1 = toNumberString(yokupay_fee);
-      const process_fee_1 = toNumberString(percent_2);
-
-      const Dollar = (USD_number * ETH).toFixed(2);
-      const collateral_fee_dollar = (USD_number * collateral_fee_1).toFixed(2);
-      const yokupay_fee_dollar = (USD_number * yokupay_fee_1).toFixed(2);
-      const process_fee_dollar = (USD_number * process_fee_1).toFixed(2);
-
-      const dollarFees = (USD_number * percent).toFixed(2);
-
-      // Success 200
-      const responseJSON = {
-        data: {
-          prices: {
-            ada_price: ADAamount,
-            ethereum_price: finalETH,
-            usd_price: Dollar,
-          },
-          fees: {
-            eth: {
-              process_fee: percent_2,
-              yokupay_fee,
-              collateral_fee,
-            },
-            dollar: {
-              process_fee: process_fee_dollar,
-              yokupay_fee: yokupay_fee_dollar,
-              collateral_fee: collateral_fee_dollar,
-            },
-          },
-          percent: {
-            process_fee: percent_final,
-            yokupay_fee: 1.0,
-            collateral_fee: 2.0,
-          },
-          exchange: {
-            ada_eth: conversion,
-            usd_eth: USD_number,
-          },
-        },
-        status: 200,
-      };
-
-      res.status(200).send(responseJSON);
+        res.status(500).send(errorResponse);
+      }
     } else {
-      // error response 400
+      // error response 500
       const errorResponse = {
         message: "Invalide Input",
       };
@@ -285,14 +260,6 @@ expressApp.post("/yokupay/jpg/fees", async (req, res) => {
   }
 });
 
-expressApp.get("/security/bearertoken", async (req, res) => {
-  const username = req.body.username;
-  const role = req.body.role;
-
-  const newToken = getToken(username, role);
-  res.status(200).send({ token: newToken });
-});
-
 expressApp.post("/yokupay/opentheta/buyNFT", async (req, res) => {
   const securityCheck = await checkToken(req);
   if (securityCheck) {
@@ -304,9 +271,9 @@ expressApp.post("/yokupay/opentheta/buyNFT", async (req, res) => {
       const nftContract = req.body.nftContract;
       const marketID = req.body.marketID;
       const value = req.body.value;
-      
+
       const contractCall = await buyNFT(nftContract, marketID, value);
-      console.log(contractCall.code)
+      console.log(contractCall.code);
       if (contractCall.code.length > 0) {
         res.status(200).send({ data: contractCall, status: 200 });
       } else {
@@ -402,7 +369,7 @@ const connectWallet = async () => {
 
   contract_721 = new web3.eth.Contract(
     abi_metroNFT,
-    "0x85a3836E8A6B3DABc531Ed97F4CBa1bF5ddF4782"
+    "0x4C86eC73d17c44D59905a914fDb2fdb72e5138DC"
   );
 
   console.log("✅ Wallet Connected");
@@ -432,7 +399,7 @@ const submitNFT = async (ipfsHash, fun) => {
   // let nonce = (await abi_metroNFT.methods.getNonce(signerAddress).call()) + 1;
   const nonce = await web3.eth.getTransactionCount(signerAddress, "pending");
   const functionAbi = await contract_721.methods
-    .mint(signerAddress, ipfsHash.data.IpfsHash)
+    .safeMint(signerAddress, ipfsHash.data.IpfsHash)
     .encodeABI();
 
   var txData = {
@@ -440,7 +407,7 @@ const submitNFT = async (ipfsHash, fun) => {
     nonce: web3.utils.toHex(nonce),
     gasPrice: "0x2E90EDD000",
     from: signerAddress,
-    to: "0x85a3836E8A6B3DABc531Ed97F4CBa1bF5ddF4782",
+    to: "0x4C86eC73d17c44D59905a914fDb2fdb72e5138DC",
     value: "0x0",
     gas: "0xF4240",
     data: functionAbi,
@@ -503,30 +470,6 @@ const pinJSONToIPFS = async (JSONBody) => {
     });
 };
 
-const getCurrentADAETHprice = async () => {
-  const cryptoResponse = await axios.get(
-    `https://min-api.cryptocompare.com/data/price?fsym=ADA&tsyms=ETH&api_key={${process.env.CRYPTOCOMPARE}}`
-  );
-  const number = parseFloat(cryptoResponse.data.ETH);
-  return number;
-};
-
-const getCurrentETHUSDprice = async () => {
-  const cryptoResponse = await axios.get(
-    `https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=USD&api_key={${process.env.CRYPTOCOMPARE}}`
-  );
-  const number = parseFloat(cryptoResponse.data.USD);
-  return number;
-};
-
-function toNumberString(num) {
-  if (Number.isInteger(num)) {
-    return num + ".0";
-  } else {
-    return num.toString();
-  }
-}
-
 function checkToken(req) {
   let token = req.headers["x-access-token"] || req.headers["authorization"];
   var valide = false;
@@ -544,7 +487,7 @@ function checkToken(req) {
   }
 
   if (token) {
-    jwt.verify(token, process.env.YOKU_TOKEN_SECRET, (err, decoded) => {
+    jwt.verify(token, "thisIsMySecret", (err, decoded) => {
       if (err) {
         console.log(err);
         valide = false;
@@ -560,7 +503,105 @@ function checkToken(req) {
   return valide;
 }
 
-function getToken(username, role) {
-  let token = jwt.sign({ user: username, role }, process.env.YOKU_TOKEN_SECRET);
-  return token;
+async function getFees(originalPrice, FromCryptoCurrency, ToCryptoCurrency) {
+  FromCryptoCurrency = FromCryptoCurrency.toUpperCase();
+  ToCryptoCurrency = ToCryptoCurrency.toUpperCase();
+  // Get Convertion
+  let polygonValue = await convertCrypto(
+    originalPrice,
+    FromCryptoCurrency,
+    ToCryptoCurrency
+  ); //this is how much the NFT costs in matic
+
+  // Calc Fees
+  let polyGas = await web3.eth.estimateGas({});
+  const totalGasPolygon = polyGas * 7;
+  const binanceFees = polygonValue * 0.021;
+
+  // All Fees in Matic
+  const processingFeesMatic = await roundUp(totalGasPolygon + binanceFees);
+  const yokuFeeMatic = await roundUp(polygonValue / 100);
+  const collateralMatic = await roundUp(polygonValue / 50);
+
+  //Total Price in Matic & Dollar
+  const totalPriceMatic = await roundUp(
+    polygonValue + processingFeesMatic + yokuFeeMatic + collateralMatic
+  );
+  const totalPriceUSD = (
+    await convertUSD(totalPriceMatic, ToCryptoCurrency)
+  ).toFixed(2);
+
+  //Fees in USD
+  const process_fee_dollar = (
+    await convertUSD(processingFeesMatic, ToCryptoCurrency)
+  ).toFixed(2);
+  const yokupay_fee_dollar = (
+    await convertUSD(yokuFeeMatic, ToCryptoCurrency)
+  ).toFixed(2);
+  const collateral_fee_dollar = (
+    await convertUSD(collateralMatic, ToCryptoCurrency)
+  ).toFixed(2);
+
+  //Processing Fees in Percent
+  const percent = totalPriceMatic - polygonValue / (1 * 10 ** 18);
+  const percent1 = polygonValue / (1 * 10 ** 18) / 100;
+  const processFeesPercent = (percent / percent1).toFixed(2);
+
+  // From Price
+  const price = originalPrice / (1 * 10 ** 18);
+
+  return {
+    data: {
+      prices: {
+        from_price: price,
+        to_price: totalPriceMatic,
+        usd_price: totalPriceUSD,
+      },
+      fees: {
+        to_currency: {
+          process_fee: processingFeesMatic,
+          yokupay_fee: yokuFeeMatic,
+          collateral_fee: collateralMatic,
+        },
+        dollar: {
+          process_fee: process_fee_dollar,
+          yokupay_fee: yokupay_fee_dollar,
+          collateral_fee: collateral_fee_dollar,
+        },
+      },
+      percent: {
+        process_fee: processFeesPercent,
+        yokupay_fee: 1.0,
+        collateral_fee: 2.0,
+      },
+    },
+    status: 200,
+  };
+}
+
+async function convertCrypto(price, FromCryptoCurrency, ToCryptoCurrency) {
+  const cryptoResponse = await axios.get(
+    `https://min-api.cryptocompare.com/data/pricemulti?fsyms=${FromCryptoCurrency}&tsyms=${ToCryptoCurrency}&api_key={92c44399461d32381bf6d4c5289d23ff639ef1b06da94017e4687ae72ea1b7be}`
+  );
+
+  const number = parseFloat(
+    cryptoResponse.data[FromCryptoCurrency][ToCryptoCurrency]
+  );
+  let maticPrice = price * number;
+  return maticPrice;
+}
+
+async function convertUSD(price, ToCryptoCurrency) {
+  const cryptoResponse = await axios.get(
+    `https://min-api.cryptocompare.com/data/pricemulti?fsyms=${ToCryptoCurrency}&tsyms=USD&api_key={92c44399461d32381bf6d4c5289d23ff639ef1b06da94017e4687ae72ea1b7be}`
+  );
+  const number = parseFloat(cryptoResponse.data[ToCryptoCurrency].USD);
+  let maticPrice = price * number;
+  return maticPrice;
+}
+
+async function roundUp(numby) {
+  let decimal = numby / (1 * 10 ** 18);
+  roundedFee = Math.ceil(decimal);
+  return roundedFee;
 }

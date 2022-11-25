@@ -72,7 +72,7 @@ export default function Checkout({
 
     var config = {
       method: "post",
-      url: "https://receipt-nft.yokupass.com/yokupay/opentheta/receiptNFT",
+      url: "https://service.yokupass.com/yokupay/opentheta/receiptNFT",
       headers: {
         Authorization: process.env.REACT_APP_BEAR,
         "Content-Type": "application/x-www-form-urlencoded",
@@ -109,7 +109,7 @@ export default function Checkout({
 
     var config = {
       method: "post",
-      url: "https://receipt-nft.yokupass.com/database/jwt",
+      url: "https://service.yokupass.com/database/jwt",
       headers: {
         Authorization: process.env.REACT_APP_BEAR,
         "Content-Type": "application/x-www-form-urlencoded",
@@ -190,7 +190,7 @@ export default function Checkout({
 
   const getCurrentTFUEL_ETHprice = async () => {
     const cryptoResponse = await axios.get(
-      `https://min-api.cryptocompare.com/data/price?fsym=TFUEL&tsyms=ETH&api_key={${REACT_APP_CRYPTOCOMPARE}}`
+      `https://min-api.cryptocompare.com/data/price?fsym=TFUEL&tsyms=ETH&api_key={1c4ac91e6cfe6b26fdb17cd046918a29aff4d7957c32f1c1df6109ad68ad2e1c}`
     );
     const number = parseFloat(cryptoResponse.data.ETH);
     return number;
@@ -198,7 +198,7 @@ export default function Checkout({
 
   const getCurrentETH_USDprice = async () => {
     const cryptoResponse = await axios.get(
-      `https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=USD&api_key={${REACT_APP_CRYPTOCOMPARE}}`
+      `https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=USD&api_key={1c4ac91e6cfe6b26fdb17cd046918a29aff4d7957c32f1c1df6109ad68ad2e1c}`
     );
     const number = parseFloat(cryptoResponse.data.USD);
     return number;
@@ -247,7 +247,7 @@ export default function Checkout({
         <div className="CurrencyGrid">
           <button className="fontCurrencys">
             <img className="ethLogo" src={"/svg/Ethereum.svg"} />
-            Ethereum
+            Polygon (Matic)
           </button>
         </div>
         <div className="line marginTop"></div>

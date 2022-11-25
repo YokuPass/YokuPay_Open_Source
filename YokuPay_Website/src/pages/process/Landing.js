@@ -3,7 +3,9 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import jwtDecoder from "jwt-decode";
 import qs from "qs";
+import uuid from "react-uuid";
 
+import removeCookie from "../../hooks/removeCookie";
 import setCookie from "../../hooks/setCookie";
 
 // This Components is just used to Redirect
@@ -16,6 +18,9 @@ export default function Landing({
   setOrderID,
   setEndPoint,
   setStoreID,
+  setNFTurl,
+  nftURL,
+  setAssetID
 }) {
   const [errorPage, setErrorPage] = useState(false);
   const [searchParams] = useSearchParams();
@@ -34,6 +39,9 @@ export default function Landing({
   };
 
   useEffect(() => {
+    removeCookie("y_rth");
+    removeCookie("u_ead");
+    removeCookie("u_cad");
     if (searchParams.has("order")) {
       var data = qs.stringify({
         orderID: searchParams.get("order"),
@@ -41,7 +49,7 @@ export default function Landing({
 
       var config = {
         method: "post",
-        url: "https://receipt-nft.yokupass.com/database/jwt",
+        url: "https://service.yokupass.com/database/jwt",
         headers: {
           Authorization: process.env.REACT_APP_BEAR,
           "Content-Type": "application/x-www-form-urlencoded",
@@ -54,82 +62,31 @@ export default function Landing({
           console.log(json.data);
           const decode = jwtDecoder(json.data.token);
           if (decode) {
-            setNFTcontract(decode.nftcontract);
-            setMarketID(decode.marketid);
-            setTokenID(decode.tokenid);
-            setNftName(decode.name);
-            setStorePrice(decode.wei);
-            setEndPoint(decode.endpoint);
-            setStoreID(decode.storeid);
-            setOrderID(decode.orderid);
+            setAssetID(decode.AssetID);
+            setNftName(decode.Name);
+            setStorePrice(decode.Wei);
+            setEndPoint(decode.Endpoint);
+            setStoreID(decode.StoreID);
+            setOrderID(decode.Orderid);
+            setNFTurl(decode.url);
             console.log(decode);
             navigate(
-              `/payment/${decode.storeid}/order${decode.orderid}/connect/${
-                decode.orderid
-              }/${decode.nftcontract}`,
+              `/payment/${decode.storeid}/order${decode.orderid}/connect/${decode.AssetID}`,
               { state: { order: decode.orderid } }
             );
           } else {
             console.log("Error, cannot decode Json WebToken");
-            setErrorPage(true);
+            navigate(`/payment/error/${uuid()}`);
           }
         })
         .catch((err) => {
           console.log(err);
-          setErrorPage(true);
+          navigate(`/payment/error/${uuid()}`);
         });
     } else {
-      setErrorPage(true);
+      navigate(`/payment/error/${uuid()}`);
     }
   }, []);
 
-  const backToStore = () => {
-    window.location.replace("https://yokupass.com");
-  };
-
-  if (errorPage) {
-    return (
-      <div className="mainDiv">
-        <div className="card">
-          <div className="ErrorPage">
-            <h1 className="ErrorHeader">Uuups, Error happend while redirect</h1>
-            <p>Please contact YokuPay</p>
-            <button
-              className="buttonConfirm errorButton"
-              onClick={() => {
-                backToStore();
-              }}
-            >
-              To YokuPay
-            </button>
-          </div>
-        </div>
-        <div className="footer">
-          <div className="footerItems">
-            <a href={"/yokupay/terms-and-conditions"} className="aData a1">
-              Terms and Conditions
-            </a>
-            <a href={"/yokupay/privacy-policy"} className="aData a1">
-              Privacy Policy
-            </a>
-            <a
-              href={"https://discord.gg/QcUBHYxW"}
-              target="_blank"
-              className="aData a1"
-            >
-              Contact Us
-            </a>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  return <></>;
 }
-
-// Bsp.: http://localhost:3000/pay?nftcontract= &marketid= &tokenid= &name= &wei= &endpoint=
-// https://pay.yokupass.com/payment/pay?assetid=a02684b9ece84a4341585d2ae813163356ba0ca950091d1935bdb9054855534b59484f53544c45523137333038&policyid=a02684b9ece84a4341585d2ae813163356ba0ca950091d1935bdb905&collection=The-Ape-Society&name=Telford-White&lovelace=100000000&endpoint=https://www.jpg.store&storeid=jpg
-
-// https://pay.yokupass.com/payment/pay?assetid=a02684b9ece84a4341585d2ae813163356ba0ca950091d1935bdb9054855534b59484f53544c45523137333038&policyid=a02684b9ece84a4341585d2ae813163356ba0ca950091d1935bdb905&collection=The-Ape-Society&name=Telford-White&lovelace=10000000&endpoint=https://www.jpg.store&storeid=jpg
-
-// https://pay.yokupass.com/payment/pay?nftcontract=0xda05058a12541a18f45123e4f0475f93422445e1&marketid=23338&tokenid=1662&name=Test&wei=6000000000000000000&endpoint=https://www.opentheta.io&storeid=opentheta
-// https://pay.yokupass.com/payment/pay?nftcontract=-------------&marketid=--------&tokenid=----------&name=--------&wei=5000000000000000000&endpoint=https://www.opentheta.io&storeid=opentheta

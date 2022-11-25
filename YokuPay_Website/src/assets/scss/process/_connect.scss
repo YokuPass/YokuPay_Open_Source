@@ -6,7 +6,23 @@
   align-items: center;
   justify-content: center;
   flex-direction: column;
+  background: linear-gradient(-45deg, #ae5337, #23a6d5, #23d5ab);
+	background-size: 400% 400%;
+	animation: gradient 60s ease infinite;
 }
+
+@keyframes gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+
 
 .card {
   display: flex;
@@ -48,10 +64,13 @@
 
 .connectMetaMask {
   display: flex;
-  margin-top: 10%;
-  margin-left: 30px;
-  margin-right: 30px;
-  margin-bottom: 10%;
+  flex-direction: column;
+  margin-top: 5%;
+}
+
+.connectBuyButton {
+  display: flex;
+  margin-top: 0;
 }
 
 .MetaMaskButton {
@@ -61,7 +80,18 @@
   border: 2px solid #eff2f6;
   border-radius: 10px;
   align-items: center;
-  padding: 10px;
+  padding: 5px;
+  margin-bottom: 0.5rem;
+}
+
+.BuyButtonPolygon {
+  display: flex;
+  width: 100%;
+  background-color: #3B60E5;
+  border: 2px solid #3B60E5;
+  border-radius: 10px;
+  align-items: center;
+  padding: 9px;
 }
 
 .MetaMaskButton:hover {
@@ -74,20 +104,35 @@
 }
 
 .MetaMaskImg {
-  width: 40px;
-  height: 40px;
+  width: 30px;
+  height: 30px;
   margin-left: 10px;
 }
 
 .MetaMaskText {
   padding-left: 10px;
-  font-size: 1.2rem;
+  font-size: 1rem;
   font-weight: 450;
   overflow: hidden;
   white-space: nowrap; /* Don't forget this one */
   text-overflow: ellipsis;
   max-width: 80%;
   margin-bottom: 0px;
+}
+
+
+.BuyButtonText {
+  // padding-left: 10%;
+  font-size: 1rem;
+  font-weight: 450;
+  // overflow: hidden;
+  // white-space: nowrap; /* Don't forget this one */
+  // text-overflow: ellipsis;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 100%;
+  margin-bottom: 0px;
+  color: white;
 }
 
 .and {
@@ -139,8 +184,8 @@
 .line {
   margin-left: 30px;
   margin-right: 30px;
-  height: 1px;
-  background-color: #dfe4ea;
+  height: 0.5px;
+  background-color: lightgrey;
 }
 
 .marginTop {
@@ -156,9 +201,17 @@
 }
 
 .fontFees {
-  font-size: 1.1rem;
+  font-size: 0.8rem;
   font-weight: 500;
   margin-bottom: 0px;
+  margin-top: 0.2rem;
+}
+
+.fontFeesSlim {
+  font-size: 0.8rem;
+  font-weight: 300;
+  margin-bottom: 0px;
+  margin-top: 0.2rem;
 }
 
 .price {
@@ -169,6 +222,7 @@
 .fontTotal {
   font-size: 1.5rem;
   font-weight: 450;
+  margin: 0;
 }
 
 .fontNFTspecs {
@@ -370,7 +424,7 @@
 
 .a1 {
   text-decoration: none;
-  color: rgba(78, 78, 78);
+  color: black;
 }
 
 .a1:hover {

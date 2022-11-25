@@ -1,0 +1,245 @@
+.newCard {
+    display: flex;
+    width: 80%;
+    background-color: white;
+    border-radius: 30px;
+    padding: 2%;
+    margin-top: 5%;
+    // margin: 5% 20% 5% 20%;
+    // min-width: 30rem;
+    // max-width: 100rem;
+    height: 80%;
+    // min-height: 20rem;
+    // max-height: 50rem;
+    // margin-top: 3rem;
+    //box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
+    /* From https://css.glass */
+    background: rgba(255, 255, 255, 0.35);
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(7px);
+    -webkit-backdrop-filter: blur(7px);
+    border: 1px solid rgba(255, 255, 255, 0.45);
+}
+
+.ConnectBack{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position:absolute;
+    z-index: 100000000000000;
+    padding:0;
+    margin:0;
+
+    top:0;
+    left:0;
+
+    width: 100%;
+    height: 100%;
+    background:rgba(0,0,0,0.8);
+}
+
+.placeholderDiv {
+    width: 1rem;
+}
+
+.aroundPicture {
+    display: flex;
+    width: 60%;
+    height: 100%;
+}
+
+.nftpicture {
+    background-size: contain;
+    width: 100%;
+    border-radius: 15px;
+    background-repeat: no-repeat;
+}
+
+.TextColumn {
+    display: flex;
+    flex-direction: column;
+    width: 40%;
+    height: 100%;
+    height: auto;
+    padding-left: 3%;
+}
+
+.LoadingColumn {
+    display: flex;
+    flex-direction: column;
+    width: 40%;
+    height: 100%;
+    height: auto;
+    padding-left: 3%;
+    align-items: center;
+    margin-top: 20%;
+}
+
+.SuccessColumn {
+    display: flex;
+    flex-direction: column;
+    width: 40%;
+    height: 100%;
+    height: auto;
+    padding-left: 3%;
+    margin-top: 12%;
+}
+
+.BuildingColumn {
+    display: flex;
+    flex-direction: column;
+    width: 40%;
+    height: 100%;
+    height: auto;
+    padding-left: 3%;
+    margin-top: 5%;
+    align-items: center;
+}
+
+.HeadlineFlex {
+    display: flex;
+    flex-direction: column;
+}
+
+.TopHeadline {
+    font-size: 2rem;
+    font-weight: 800;
+    margin: 0;
+}
+
+.ct {
+    text-align: left;
+}
+
+.congratsText {
+    font-size: 2rem;
+    font-weight: 800;
+    margin: 0;
+}
+
+.nftNameText {
+    font-size: 1.5rem;
+    margin: 0;
+    margin-bottom: 5%;
+}
+
+.subTotal {
+    font-weight: 200;
+    font-size: 10px;
+}
+
+.CollectionName {
+    font-weight: 600;
+    margin-right: 1%;
+}
+
+.SegmentHeadlineFlex {
+    display: flex;
+}
+
+.InfoBoxFlex {
+    display: flex;
+}
+
+.GreyBox {
+    display: flex;
+    flex-direction: row;
+    border-radius: 20px;
+    border: 0.5px solid lightgrey;
+    height: 100%;
+    width: 100%;
+    padding: 3%;
+    align-items: center;
+    margin-top: 2%;
+}
+
+.GreyText {
+    font-size: 10px;
+    margin: 0 !important; 
+}
+
+.sorryText {
+    margin: 0;
+}
+
+.loadingText {
+    font-size: 10px;
+    margin-top: 3rem !important; 
+}
+
+.receiptText {
+    font-size: 10px;
+    margin-top: 10rem !important; 
+}
+
+.ToSText {
+    font-size: 10px;
+    margin-bottom: 0;
+}
+
+.PolygonImage {
+    background-size: contain;
+    width: 30%;
+    background-repeat: no-repeat;
+}
+
+.CalculationFlex {
+    display: flex;
+    flex-direction: column;
+    margin-top: 5%;
+}
+
+.FooterFlex {
+    display: flex;
+    flex-direction: column;
+    margin-top: auto;
+}
+
+.loggedInTag {
+    margin-bottom: 0;
+    margin-left: .5rem;
+    font-size: 10px;
+}
+
+.wrapperError {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.errorlady {
+    background-size: contain;
+    width: 25%;
+    margin-top: 5%;
+    margin-bottom: 5%;
+    background-repeat: no-repeat;
+}
+
+.pleaseText {
+    color: white;
+    margin: 0;
+}
+
+.pressHere {
+    color: white;
+    margin: 0;
+    border: none;
+    background: none;
+}
+
+.buildingimage {
+    background-size: contain;
+    width: 50%;
+    margin-top: 25%;
+    margin-bottom: 5%;
+    background-repeat: no-repeat;
+}
+
+.Errimage {
+    background-size: contain;
+    width: 20%;
+    margin-top: 15%;
+    margin-bottom: 2%;
+    background-repeat: no-repeat;
+}

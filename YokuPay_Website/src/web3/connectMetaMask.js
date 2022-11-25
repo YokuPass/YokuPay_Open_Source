@@ -20,4 +20,4 @@ const connectMetaMask = async () => {
   }
 };
 
-module.exports = connectMetaMask;
+export default connectMetaMask;

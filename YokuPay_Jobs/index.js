@@ -10,15 +10,12 @@ const CronJob = require("cron").CronJob;
 const jwt = require("jsonwebtoken");
 
 const abi_JPG_YokuPay = require("./assets/jpg_abi.json").abi;
-const abi_OpenTheta_YokuPay = require("./assets/openTheta_abi.json").abi
-
+const abi_OpenTheta_YokuPay = require("./assets/openTheta_abi.json").abi;
 
 var cors = require("cors");
 
-
 const { pool } = require("./assets/Database");
 const getCurrentTimestamp = require("./functions/getCurrentTime");
-
 
 expressApp.use(cors());
 expressApp.use(express.json());
@@ -30,19 +27,19 @@ expressApp.use(
 
 const externalProvider_1 = new HDWalletProvider(
   privateKey_1, // Mein Privat Key
-  "https://rinkeby.infura.io/v3/bdd736d9f192420a8a875b9ded7d7abe"
+  "https://polygon-rpc.com/"
 );
 
 var web3_1 = new Web3(externalProvider_1);
 
 var contract_721_1 = new web3_1.eth.Contract(
   abi_JPG_YokuPay,
-  "0x3B88A22A36f77a6c37d55830327f22aF163716e3" //Contract Address 
+  process.env.POLY_CA_JPG //Contract Address
 );
 
 var contract_721_2 = new web3_1.eth.Contract(
   abi_OpenTheta_YokuPay,
-  "0xbe97d1BcfA579611d8681CF3F11B80AF064C2c97" //Contract Address 
+  process.env.POLY_CA_OT //Contract Address
 );
 
 expressApp.post("/yokupay/jpg/checkUTXO", async function (req, res) {
@@ -51,9 +48,14 @@ expressApp.post("/yokupay/jpg/checkUTXO", async function (req, res) {
     const transactionHash = req.body.transactionHash;
     const assetID = req.body.assetID;
     const user = req.body.ethereumAddress;
-    if (transactionHash !== undefined && assetID !== undefined && transactionHash.length >= 66 && user.length >= 42) {
+    if (
+      transactionHash !== undefined &&
+      assetID !== undefined &&
+      transactionHash.length >= 66 &&
+      user.length >= 42
+    ) {
       const execute = Math.floor(new Date().getTime() / 1000.0) + 60;
-      const frist = Math.floor(new Date().getTime() / 1000.0)
+      const frist = Math.floor(new Date().getTime() / 1000.0);
       try {
         const getLinkDatabase = await pool.query(
           `INSERT INTO jpg_joblist (transactionhash, assetid, created, execute, process, first, usertxh) VALUES ('${transactionHash}', '${assetID}', '${getCurrentTimestamp()}', ${execute}, ${false}, ${frist}, '${user}')`
@@ -84,8 +86,7 @@ expressApp.post("/yokupay/jpg/checkUTXO", async function (req, res) {
     };
     res.status(401).send(unauthorizedResponse);
   }
-  }
-);
+});
 
 expressApp.post("/yokupay/opentheta/checkUTXO", async function (req, res) {
   const securityCheck = await checkToken(req);
@@ -93,10 +94,19 @@ expressApp.post("/yokupay/opentheta/checkUTXO", async function (req, res) {
     const transactionHash = req.body.transactionHash;
     const marketID = req.body.marketID;
     const user = req.body.ethereumAddress;
-    console.log(req.body.transactionHash, req.body.marketID, req.body.ethereumAddress)
-    if (transactionHash !== undefined && marketID !== undefined && transactionHash.length >= 66 && user.length >= 42) {
-      const execute = Math.floor(new Date().getTime() / 1000.0) + 60;
-      const frist = Math.floor(new Date().getTime() / 1000.0)
+    console.log(
+      req.body.transactionHash,
+      req.body.marketID,
+      req.body.ethereumAddress
+    );
+    if (
+      transactionHash !== undefined &&
+      marketID !== undefined &&
+      transactionHash.length >= 66 &&
+      user.length >= 42
+    ) {
+      const execute = Math.floor(new Date().getTime() / 1000.0) + 10;
+      const frist = Math.floor(new Date().getTime() / 1000.0);
       try {
         const getLinkDatabase = await pool.query(
           `INSERT INTO opentheta_joblist (transactionhash, marketid, created, execute, process, first, usertxh) VALUES ('${transactionHash}', '${marketID}', '${getCurrentTimestamp()}', ${execute}, ${false}, ${frist}, '${user}')`
@@ -127,8 +137,11 @@ expressApp.post("/yokupay/opentheta/checkUTXO", async function (req, res) {
     };
     res.status(401).send(unauthorizedResponse);
   }
-  }
-);
+});
+
+expressApp.get("/online", function (req, res) {
+  res.send({ status: "online" });
+});
 
 expressApp.get("/online", function (req, res) {
   const obj = {
@@ -151,19 +164,37 @@ const jpg_job = new CronJob("1 * * * * *", async function () {
     );
     if (checkTime.rows.length > 0 || checkTime.rows.length === undefined) {
       for (let index = 0; index < checkTime.rows.length; index++) {
-        const currentUser = checkTime.rows[index].usertxh;
+        var currentUser = checkTime.rows[index].usertxh;
+        currentUser = Web3.utils.toChecksumAddress(currentUser);
+
+        const deleteJob = await pool.query(
+          `UPDATE jpg_joblist
+          SET process= ${true}
+          WHERE usertxh='${currentUser}';`
+        );
+
         console.log("Contract Call started");
         const nonce = await web3_1.eth.getTransactionCount(
           "0x7e1BBDDe3cB26F406800868f10105592d507bD07"
         );
+
+        const resGasMethod = await contract_721_2.methods
+          .requestBytes(currentUser)
+          .estimateGas({ from: "0x21bA299fD57f868eA9901252a6F671d8E688a71c" });
+        var gasPrice = await web3_1.eth.getGasPrice(); // estimate the gas price
+
+        console.log(currentUser);
+
         const contractCall = await contract_721_1.methods
           .requestBytes(currentUser)
           .send({
-            from: "0x7e1BBDDe3cB26F406800868f10105592d507bD07",
+            from: "0x21bA299fD57f868eA9901252a6F671d8E688a71c",
             nonce: nonce,
+            gasPrice: gasPrice,
+            gas: resGasMethod,
           })
           .then(async (contractTxHash) => {
-            console.log("Kein Error")
+            console.log("Kein Error");
             console.log(contractTxHash);
             if (contractTxHash.status === true) {
               const deleteJob = await pool.query(
@@ -173,7 +204,14 @@ const jpg_job = new CronJob("1 * * * * *", async function () {
               );
             }
           })
-          .catch((err) => console.error("Error: ", err));
+          .catch(async (err) => {
+            console.error("Error: ", err);
+            const deleteJob = await pool.query(
+              `UPDATE opentheta_joblist
+              SET process= ${false}
+              WHERE usertxh='${currentUser}';`
+            );
+          });
       }
     } else {
       console.log("Currently No JPG Job");
@@ -191,19 +229,36 @@ const opentheta_job = new CronJob("1 * * * * *", async function () {
     );
     if (checkTime.rows.length > 0 || checkTime.rows.length === undefined) {
       for (let index = 0; index < checkTime.rows.length; index++) {
-        const currentUser = checkTime.rows[index].usertxh;
+        var currentUser = checkTime.rows[index].usertxh;
+        currentUser = Web3.utils.toChecksumAddress(currentUser);
+
+        const deleteJob = await pool.query(
+          `UPDATE opentheta_joblist
+          SET process= ${true}
+          WHERE usertxh='${currentUser}';`
+        );
+
         console.log("Contract Call started");
         const nonce = await web3_1.eth.getTransactionCount(
-          "0x7e1BBDDe3cB26F406800868f10105592d507bD07"
+          "0x21bA299fD57f868eA9901252a6F671d8E688a71c"
         );
+
+        const resGasMethod = await contract_721_2.methods
+          .requestBytes(currentUser)
+          .estimateGas({ from: "0x21bA299fD57f868eA9901252a6F671d8E688a71c" });
+        var gasPrice = await web3_1.eth.getGasPrice(); // estimate the gas price
+
+        console.log(currentUser);
         contract_721_2.methods
           .requestBytes(currentUser)
           .send({
-            from: "0x7e1BBDDe3cB26F406800868f10105592d507bD07",
+            from: "0x21bA299fD57f868eA9901252a6F671d8E688a71c",
             nonce: nonce,
+            gasPrice: gasPrice,
+            gas: resGasMethod,
           })
           .then(async (contractTxHash) => {
-            console.log("Kein Error")
+            console.log("Kein Error");
             console.log(contractTxHash);
             if (contractTxHash.status === true) {
               const deleteJob = await pool.query(
@@ -213,7 +268,14 @@ const opentheta_job = new CronJob("1 * * * * *", async function () {
               );
             }
           })
-          .catch((err) => console.error("Error: ", err));
+          .catch(async (err) => {
+            console.error("Error: ", err);
+            const deleteJob = await pool.query(
+              `UPDATE opentheta_joblist
+              SET process= ${false}
+              WHERE usertxh='${currentUser}';`
+            );
+          });
       }
     } else {
       console.log("Currently No OpenTheta Job");
@@ -228,19 +290,19 @@ function checkToken(req) {
   var valide = false;
 
   if (token === undefined) {
-    valide = false
-    return
+    valide = false;
+    return;
   }
 
   if (token.startsWith("Bearer ")) {
     token = token.slice(7, token.length);
   } else {
-    valide = false
-    token = false
+    valide = false;
+    token = false;
   }
 
   if (token) {
-    jwt.verify(token, process.env.JWTSECET, (err, decoded) => {
+    jwt.verify(token, "thisIsMySecret", (err, decoded) => {
       if (err) {
         console.log(err);
         valide = false;

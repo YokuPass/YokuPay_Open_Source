@@ -6,7 +6,6 @@ import axios from "axios";
 import qs from "qs";
 
 import getCookie from "../../hooks/getCookie";
-import removeCookie from "../../hooks/removeCookie";
 import { useLocation, useNavigate } from "react-router-dom";
 
 export default function Success({
@@ -23,14 +22,12 @@ export default function Success({
   setEndPoint,
   setStoreID,
   setBillingNFT,
+  nftName,
+  tokenID,
+  setNFTurl,
+  nftURL,
+  assetID
 }) {
-  const confirm = () => {
-    removeCookie("y_rth");
-    removeCookie("u_ead");
-    removeCookie("u_cad");
-
-    window.location.replace(endPoint);
-  };
 
   const navigate = useNavigate();
   const state = useLocation();
@@ -46,7 +43,7 @@ export default function Success({
 
     var config = {
       method: "post",
-      url: "https://receipt-nft.yokupass.com/database/jwt",
+      url: "https://service.yokupass.com/database/jwt",
       headers: {
         Authorization: process.env.REACT_APP_BEAR,
         "Content-Type": "application/x-www-form-urlencoded",
@@ -71,7 +68,8 @@ export default function Success({
               setEndPoint(decode.endpoint);
               setStoreID(decode.storeid);
               setOrderID(decode.orderid);
-              console.log(decode);
+              setNFTurl(decode.url);
+              console.log(decode); 
 
             }
           } else {
@@ -90,35 +88,24 @@ export default function Success({
 
   return (
     <div className="mainDiv">
-      <div className="card">
-        <div className="headerLogo">
-          <img className="headerLogoIMG" src={"/svg/YokuLogo.svg"} />
+      <div className="newCard">
+        <div className="aroundPicture">
+          <img className="nftpicture" src={nftURL}></img>
         </div>
-        <div className="headerTitle">
-          <h1 className="headerTitleh1">Congrats</h1>
-        </div>
-        <img className="successImg" src={"/svg/SuccessImg.svg"} />
-        <div className="textDiv">
-          <h1 className="textSuccessH1">Your NFT will arrive within 30min</h1>
-          <p className="textSuccessP">Oder ID: {orderID} </p>
-          <p className="textSuccessP">
-            Transaction Hash:{" "}
-            <a
-              href={"https://etherscan.com/tx/" + contractTransactionHash}
-              target="_blank"
-              className="pData"
-            >
-              {contractTransactionHash}
-            </a>{" "}
+        <div class="SuccessColumn">
+          <p className="congratsText ct">Congratulations!</p>
+          <p className="orderText ct">Order ID: {orderID}</p>
+          <p className="youPurchasedText ct">You just purchased:</p>
+          <p className="nftNameText ct">
+            <strong>{nftName}</strong> AssetID: {assetID}
           </p>
-          <button
-            className="buttonSuccess"
-            onClick={() => {
-              confirm();
-            }}
-          >
-            Back to store
-          </button>
+          <p className="orderDescText ct">
+            Your order will arrive within the next 30 minutes. {nftName} {" "}
+            will be visible under “My NFTs” on jpg.store.
+          </p>
+          <p className="questionsText">
+            If you have questions, visit our Discord
+          </p>
         </div>
       </div>
       <div className="footer">

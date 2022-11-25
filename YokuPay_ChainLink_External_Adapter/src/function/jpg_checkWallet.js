@@ -15,7 +15,7 @@ const checkWallet = async (input, callback) => {
     console.log(input.data);
 
     const cryptoResponse = await axios.get(
-      `https://min-api.cryptocompare.com/data/price?fsym=ADA&tsyms=ETH&api_key={${process.env.CRYPTOCOMPARE}}`
+      `https://min-api.cryptocompare.com/data/price?fsym=ADA&tsyms=MATIC&api_key={1c4ac91e6cfe6b26fdb17cd046918a29aff4d7957c32f1c1df6109ad68ad2e1c}`
     );
     console.log(cryptoResponse.data.ETH);
     const adaeth = toNumberString(cryptoResponse.data.ETH * 10 ** 18);
@@ -37,6 +37,16 @@ const checkWallet = async (input, callback) => {
       callback(jobRunID, Requester.success(jobRunID, response));
       return;
     }
+    console.log(
+      nftData.data.EthereumAddress === "0x" + input.data.user,
+      nftData.contract === process.env.NFT_CONTRACT,
+      nftData.data.PolicyID !== undefined,
+      nftData.data.AssetID !== undefined,
+      nftData.data.CardanoAddress !== undefined,
+      nftData.data.CardanoStakeAddress !== undefined,
+      nftData.data.EthereumAddress !== undefined,
+      nftData.data.Time !== undefined
+    )
     if (
       nftData.data.EthereumAddress === "0x" + input.data.user &&
       nftData.contract === process.env.NFT_CONTRACT &&
@@ -173,4 +183,10 @@ function toNumberString(num) {
 
 module.exports.checkWallet = checkWallet;
 
+// curl -X POST -H "content-type:application/json" "http://localhost:6500/payment/jpg/checkwallet/1" --data '{ "id": 1, "data": {"txh":"0x3cace78c6ce2c9dc7e3cf4d0835a27a3be1b2e14555caf6508e5224c87e54181", "user": "7e1BBDDe3cB26F406800868f10105592d507bD07"}}'
+// curl -X POST -H "content-type:application/json" "http://localhost:6500/payment/opentheta/checkwallet" --data '{ "id": 1, "data": {"txh":"0x0260821fcb496b2388bf306880c3cf59ef3c39a0bcc55fb345ad945c3ae581c6", "amount": 6000000000000000000, "rate": 61000000000000000}}'
 
+// 0x30783765316262646465336362323666343036383030383638663130313035353932643530376264303731343336343030303030303030303030
+
+// 433900000000000
+// 433900000000000

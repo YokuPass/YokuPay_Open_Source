@@ -12,7 +12,35 @@ const port = 6500;
 app.use(bodyParser.json());
 app.use(cors());
 
-app.post("/payment/jpg/checkwallet", (req, res) => {
+app.post("/payment/jpg/checkwallet/1", (req, res) => {
+  jpg_checkWallet(req.body, (status, result) => {
+    if (result) {
+      res.json(result);
+    }
+  });
+});
+app.post("/payment/jpg/checkwallet/2", (req, res) => {
+  jpg_checkWallet(req.body, (status, result) => {
+    if (result) {
+      res.json(result);
+    }
+  });
+});
+app.post("/payment/jpg/checkwallet/3", (req, res) => {
+  jpg_checkWallet(req.body, (status, result) => {
+    if (result) {
+      res.json(result);
+    }
+  });
+});
+app.post("/payment/jpg/checkwallet/4", (req, res) => {
+  jpg_checkWallet(req.body, (status, result) => {
+    if (result) {
+      res.json(result);
+    }
+  });
+});
+app.post("/payment/jpg/checkwallet/5", (req, res) => {
   jpg_checkWallet(req.body, (status, result) => {
     if (result) {
       res.json(result);
@@ -27,8 +55,6 @@ app.post("/payment/opentheta/checkwallet", (req,res) => {
     }
   })
 })
-
-//Testing
 
 app.post("/buyNFT", (req, res) => {
   opentheta_checkWallet(req.body, (status, result) => {
