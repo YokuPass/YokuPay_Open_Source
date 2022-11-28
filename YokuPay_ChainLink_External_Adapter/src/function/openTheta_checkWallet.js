@@ -14,15 +14,18 @@ const checkWallet = async (input, callback) => {
     console.log("Start check, with TransactionHash: ", input.data.txh);
     console.log(input.data);
 
+    // Request current TFUEL - MATIC exchange rate
     const cryptoResponse = await axios.get(
-      `https://min-api.cryptocompare.com/data/price?fsym=TFUEL&tsyms=ETH&api_key={1c4ac91e6cfe6b26fdb17cd046918a29aff4d7957c32f1c1df6109ad68ad2e1c}`
+      `https://min-api.cryptocompare.com/data/price?fsym=TFUEL&tsyms=MATIC&api_key={1c4ac91e6cfe6b26fdb17cd046918a29aff4d7957c32f1c1df6109ad68ad2e1c}`
     );
     console.log(cryptoResponse.data.ETH);
-    const adaeth = toNumberString(cryptoResponse.data.ETH * 10 ** 18);
+    const tfuelMatic = toNumberString(cryptoResponse.data.ETH * 10 ** 18); // convert to wei
 
-    const nftData = await getNFTData(input.data.txh);
+    // Get the NFT data of the receipt NFT
+    const nftData = await getNFTData(input.data.txh); 
     console.log(nftData);
 
+    // if no NFT Data is available
     if (nftData.data === "none") {
       console.log("Keine Daten vorhanden");
       try {
@@ -33,9 +36,10 @@ const checkWallet = async (input, callback) => {
         console.log(error);
       }
       const result = Web3.utils.asciiToHex(
-        "0x" + input.data.user + "4" + adaeth
+        "0x" + input.data.user + "4" + tfuelMatic
       );
-      console.log("Result: ", "0x" + input.data.user + "4" + adaeth);
+      console.log("Result: ", "0x" + input.data.user + "4" + tfuelMatic);
+      // callback with result number 4 (no data available)
       const response = { data: { result: result }, status: 200 };
       callback(jobRunID, Requester.success(jobRunID, response));
       return;
@@ -60,34 +64,33 @@ const checkWallet = async (input, callback) => {
       nftData.data.EthereumAddress !== undefined &&
       nftData.data.Timestamp !== undefined
     ) {
-      console.log("Alle Daten Korrect");
-
+      // if Data available, check the useres wallet for the bought NFT
       const walletData = await checkWalletAPI(
         nftData.data.ThetaAddress,
         nftData.data.TokenID,
         nftData.data.NFTcontract
       );
-      console.log(walletData);
 
       if (walletData.status === 200) {
+        // if NFT exists in the users Wallet 
         const user = nftData.data.EthereumAddress;
 
         if (walletData.walletStatus) {
           const deleteJob = await pool.query(
             `DELETE FROM opentheta_joblist WHERE transactionhash='${input.data.txh}';`
           );
-          console.log(user + "2" + adaeth);
-          const result = Web3.utils.asciiToHex(user + "2" + adaeth);
+          console.log(user + "2" + tfuelMatic);
+          const result = Web3.utils.asciiToHex(user + "2" + tfuelMatic);
           const response = { data: { result: result }, status: 200 };
-          console.log("Is inside");
+          // callback with result number 2 (NFT in users wallet)
           callback(jobRunID, Requester.success(jobRunID, response));
-          // return
         } else {
+          // else check if time for NFT transfer is expired
           const checkTime = await pool.query(
             `SELECT * FROM opentheta_joblist WHERE transactionhash='${input.data.txh}';`
           );
           const currentTime = Math.floor(new Date().getTime() / 1000.0);
-          
+
           // ____________________________________________________
           // *** for Unit Tests ***
             const timeRemove = currentTime + 100
@@ -99,10 +102,10 @@ const checkWallet = async (input, callback) => {
             const deleteJob = await pool.query(
               `DELETE FROM opentheta_joblist WHERE transactionhash='${input.data.txh}';`
             );
-            console.log(user + "3" + adaeth);
-            const result = Web3.utils.asciiToHex(user + "3" + adaeth);
-            console.log("Time expired");
+            console.log(user + "3" + tfuelMatic);
+            const result = Web3.utils.asciiToHex(user + "3" + tfuelMatic);
             const response = { data: { result: result }, status: 200 };
+            // callback with result number 3 (NFT does not exist in the users wallet and time expired)
             callback(jobRunID, Requester.success(jobRunID, response));
           } else {
             const deleteJob = await pool.query(
@@ -110,10 +113,10 @@ const checkWallet = async (input, callback) => {
               SET execute = ${currentTime + 3600}, process= ${false}
               WHERE transactionhash='${input.data.txh}';`
             );
-            console.log("Not inside");
-            console.log(user + "1" + adaeth);
-            const result = Web3.utils.asciiToHex(user + "1" + adaeth);
+            console.log(user + "1" + tfuelMatic);
+            const result = Web3.utils.asciiToHex(user + "1" + tfuelMatic);
             const response = { data: { result: result }, status: 200 };
+            // callback with result number 1 (NFT does not exist in the users wallet (retry))
             callback(jobRunID, Requester.success(jobRunID, response));
           }
         }
@@ -125,9 +128,10 @@ const checkWallet = async (input, callback) => {
         WHERE transactionhash='${input.data.txh}';`
         );
         console.log("Not inside");
-        console.log(user + "1" + adaeth);
-        const result = Web3.utils.asciiToHex(user + "1" + adaeth);
+        console.log(user + "1" + tfuelMatic);
+        const result = Web3.utils.asciiToHex(user + "1" + tfuelMatic);
         const response = { data: { result: result }, status: 200 };
+        // callback with result number 1 (NFT does not exist in the users wallet (retry))
         callback(jobRunID, Requester.success(jobRunID, response));
       }
     } else {
@@ -140,10 +144,11 @@ const checkWallet = async (input, callback) => {
         console.log(error);
       }
       const result = Web3.utils.asciiToHex(
-        "0x" + input.data.user + "4" + adaeth
+        "0x" + input.data.user + "4" + tfuelMatic
       );
-      console.log("Result: ", "0x" + input.data.user + "4" + adaeth);
+      console.log("Result: ", "0x" + input.data.user + "4" + tfuelMatic);
       const response = { data: { result: result }, status: 200 };
+      // callback with result number 4 (malicious receipt NFT)
       callback(jobRunID, Requester.success(jobRunID, response));
     }
   } catch (error) {
@@ -152,6 +157,7 @@ const checkWallet = async (input, callback) => {
   }
 };
 
+// Get NFT data function
 async function getNFTData(hash) {
   abiDecoder.addABI(abi_YokuPay);
   try {
@@ -179,6 +185,7 @@ async function getNFTData(hash) {
   }
 }
 
+// Request user wallet for NFT
 async function checkWalletAPI(ThetaAddress, TokenID, NFTcontract) {
   const url = `https://api.opentheta.io/my?collection=${ThetaAddress}&sort=recent-transfer&page=0`; // get all NFTs of account
   const response = await axios.get(url);
