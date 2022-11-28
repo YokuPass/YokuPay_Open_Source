@@ -30,10 +30,12 @@ expressApp.use(
   })
 );
 
+// mint JPG.store receipt NFT
 expressApp.post("/yokupay/jpg/receiptNFT", async (req, res) => {
   const securityCheck = await checkToken(req);
   console.log(securityCheck);
   if (securityCheck === true) {
+    // necessary inputs
     const AssetID = req.body.assetId;
     const CardanoAddress = req.body.cardanoAddress;
     const EthereumAddress = req.body.ethereumAddress;
@@ -53,7 +55,7 @@ expressApp.post("/yokupay/jpg/receiptNFT", async (req, res) => {
       const fun = (obj) => {
         res.send(obj);
       };
-
+      // mint process
       main(
         {
           AssetID,
@@ -67,7 +69,7 @@ expressApp.post("/yokupay/jpg/receiptNFT", async (req, res) => {
         fun
       );
     } else {
-      // error response 400
+      // error response 400 (invalide input)
       const errorResponse = {
         message: "Invalide Input",
       };
@@ -75,7 +77,7 @@ expressApp.post("/yokupay/jpg/receiptNFT", async (req, res) => {
       res.status(500).send(errorResponse);
     }
   } else {
-    // unauthorized response 401
+    // unauthorized response 401 (unauthorized)
     const unauthorizedResponse = {
       message: "Unauthorized",
     };
@@ -83,10 +85,12 @@ expressApp.post("/yokupay/jpg/receiptNFT", async (req, res) => {
   }
 });
 
+// mint OpenTheta receipt NFT
 expressApp.post("/yokupay/opentheta/receiptNFT", async (req, res) => {
   const securityCheck = await checkToken(req);
   console.log(securityCheck);
   if (securityCheck === true) {
+    // necessary inputs
     const NFTcontract = req.body.NFTcontract;
     const MarketID = req.body.MarketID;
     const ThetaAddress = req.body.ThetaAddress;
@@ -119,6 +123,7 @@ expressApp.post("/yokupay/opentheta/receiptNFT", async (req, res) => {
         res.send(obj);
       };
 
+      // mint process      
       main(
         {
           NFTcontract,
@@ -133,7 +138,7 @@ expressApp.post("/yokupay/opentheta/receiptNFT", async (req, res) => {
         fun
       );
     } else {
-      // error response 400
+      // error response 400 (invalide input)
       const errorResponse = {
         message: "Invalide Input",
       };
@@ -141,7 +146,7 @@ expressApp.post("/yokupay/opentheta/receiptNFT", async (req, res) => {
       res.status(500).send(errorResponse);
     }
   } else {
-    // unauthorized response 401
+    // unauthorized response 401 (unauthorized)
     const unauthorizedResponse = {
       message: "Unauthorized",
     };
@@ -149,6 +154,7 @@ expressApp.post("/yokupay/opentheta/receiptNFT", async (req, res) => {
   }
 });
 
+// get server status
 expressApp.get("/online", function (req, res) {
   const obj = {
     status: "online",
@@ -156,6 +162,7 @@ expressApp.get("/online", function (req, res) {
   res.send(JSON.stringify(obj));
 });
 
+// generate JSON Web Token for our Website (OpenTheta)
 expressApp.post("/yokupay/jwt", async (req, res) => {
   const data = {
     nftcontract: req.body.NFTcontract,
@@ -188,6 +195,7 @@ expressApp.post("/yokupay/jwt", async (req, res) => {
   });
 });
 
+// generate JSON Web Token for our Website (JPG.store)
 expressApp.post("/yokupay/jpg/jwt", async (req, res) => {
   const data = {
     assetid: req.body.AssetID,
@@ -218,6 +226,7 @@ expressApp.post("/yokupay/jpg/jwt", async (req, res) => {
   });
 });
 
+// caluculate fees for the YokuPay process
 expressApp.post("/yokupay/fees", async (req, res) => {
   // res.send(req.body.lovelace);
   console.log(req.body.price);
@@ -244,7 +253,7 @@ expressApp.post("/yokupay/fees", async (req, res) => {
         res.status(500).send(errorResponse);
       }
     } else {
-      // error response 500
+      // error response 500 (invalide input)
       const errorResponse = {
         message: "Invalide Input",
       };
@@ -252,7 +261,7 @@ expressApp.post("/yokupay/fees", async (req, res) => {
       res.status(500).send(errorResponse);
     }
   } else {
-    // unauthorized response 401
+    // unauthorized response 401 (unauthorized)
     const unauthorizedResponse = {
       message: "Unauthorized",
     };
@@ -260,6 +269,7 @@ expressApp.post("/yokupay/fees", async (req, res) => {
   }
 });
 
+// purchase OpenTheta NFTs
 expressApp.post("/yokupay/opentheta/buyNFT", async (req, res) => {
   const securityCheck = await checkToken(req);
   if (securityCheck) {
@@ -284,7 +294,7 @@ expressApp.post("/yokupay/opentheta/buyNFT", async (req, res) => {
         res.status(500).send(errorResponse);
       }
     } else {
-      // error response 400
+      // error response 400 (invalide input)
       const errorResponse = {
         message: "Invalide Input",
       };
@@ -292,7 +302,7 @@ expressApp.post("/yokupay/opentheta/buyNFT", async (req, res) => {
       res.status(500).send(errorResponse);
     }
   } else {
-    // unauthorized response 401
+    // unauthorized response 401 (unauthorized)
     const unauthorizedResponse = {
       message: "Unauthorized",
     };
@@ -300,6 +310,7 @@ expressApp.post("/yokupay/opentheta/buyNFT", async (req, res) => {
   }
 });
 
+// Get JSON Web Token with the order ID
 expressApp.post("/database/jwt", async (req, res) => {
   const securityCheck = await checkToken(req);
   if (securityCheck) {
@@ -315,13 +326,16 @@ expressApp.post("/database/jwt", async (req, res) => {
       }
     } catch (error) {
       console.log(error);
+      // error response 500 (cant find order)
       res.status(500).send({ message: "Can't find order" });
     }
   } else {
+    // unauthorized response 401 (unauthorized)
     res.status(401).send({ message: "Unauthorized" });
   }
 });
 
+// close finished orders
 expressApp.post("/database/closed_orders", async (req, res) => {
   const securityCheck = await checkToken(req);
   if (securityCheck) {
@@ -349,9 +363,11 @@ expressApp.post("/database/closed_orders", async (req, res) => {
       }
     } catch (error) {
       console.log(error);
+      // error response 500 (cant find order)
       res.status(500).send({ message: "Can't find order" });
     }
   } else {
+    // unauthorized response 401 (unauthorized)
     res.status(401).send({ message: "Unauthorized" });
   }
 });
@@ -360,6 +376,7 @@ expressApp.listen(port, () => {
   connectWallet();
 });
 
+// connect payable wallet to mint NFT
 const connectWallet = async () => {
   const externalProvider = new HDWalletProvider(
     privateKey,
@@ -368,21 +385,22 @@ const connectWallet = async () => {
   web3 = new Web3(externalProvider);
 
   contract_721 = new web3.eth.Contract(
-    abi_metroNFT,
-    "0x4C86eC73d17c44D59905a914fDb2fdb72e5138DC"
+    abi_metroNFT, // Contract ABI receipt NFT
+    "0x4C86eC73d17c44D59905a914fDb2fdb72e5138DC" // Contract Address
   );
-
   console.log("✅ Wallet Connected");
   console.log(`NFT deployment now running on caddy:${port}`);
 };
 
 const main = async (JSONobject, fun) => {
   console.log("NFT mint start");
+  // upload NFT data to IPFS 
   try {
     let ipfsHash = "";
     ipfsHash = await pinJSONToIPFS(JSONobject);
     console.log("✅ JSON data uploaded to IPFS");
 
+    // create Transaction
     submitNFT(ipfsHash, fun)
       .then(() => {
         return;
@@ -395,6 +413,7 @@ const main = async (JSONobject, fun) => {
   }
 };
 
+// mint NFT and create Transaction
 const submitNFT = async (ipfsHash, fun) => {
   // let nonce = (await abi_metroNFT.methods.getNonce(signerAddress).call()) + 1;
   const nonce = await web3.eth.getTransactionCount(signerAddress, "pending");
@@ -413,9 +432,11 @@ const submitNFT = async (ipfsHash, fun) => {
     data: functionAbi,
   };
 
+  // submit Transaction
   sendRawTransaction(txData, fun);
 };
 
+// submit the NFT transaction to the BlockChain
 const sendRawTransaction = (txData, fun) =>
   // get the number of transactions sent so far so we can create a fresh nonce
   web3.eth
@@ -452,6 +473,7 @@ const sendRawTransaction = (txData, fun) =>
       console.log(err);
     });
 
+// upload JSON data to the IPFS
 const pinJSONToIPFS = async (JSONBody) => {
   const url = `https://api.pinata.cloud/pinning/pinJSONToIPFS`;
   return axios
@@ -470,6 +492,7 @@ const pinJSONToIPFS = async (JSONBody) => {
     });
 };
 
+// function to validate JSON Web Tokens
 function checkToken(req) {
   let token = req.headers["x-access-token"] || req.headers["authorization"];
   var valide = false;
@@ -503,6 +526,7 @@ function checkToken(req) {
   return valide;
 }
 
+// Fees calculations
 async function getFees(originalPrice, FromCryptoCurrency, ToCryptoCurrency) {
   FromCryptoCurrency = FromCryptoCurrency.toUpperCase();
   ToCryptoCurrency = ToCryptoCurrency.toUpperCase();
