@@ -1,11 +1,19 @@
 {
-  "name": "js_wasm",
+  "name": "contract",
   "version": "1.0.0",
-  "description": "Near test Contracts",
-  "main": "index.js",
+  "license": "(MIT AND Apache-2.0)",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "./build.sh",
+    "deploy": "./deploy.sh",
+    "test": "echo no unit testing"
   },
-  "author": "",
-  "license": "ISC"
+  "dependencies": {
+    "near-cli": "^3.4.0",
+    "near-sdk-js": "0.6.0"
+  },
+  "devDependencies": {
+    "typescript": "^4.8.4",
+    "ts-morph": "^16.0.0"
+  }
 }
