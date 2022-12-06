@@ -154,6 +154,58 @@ expressApp.post("/yokupay/opentheta/receiptNFT", async (req, res) => {
   }
 });
 
+// mint Algorand receipt NFT
+expressApp.post("/yokupay/algorand/receiptNFT", async (req, res) => {
+  const securityCheck = await checkToken(req);
+  console.log(securityCheck);
+  if (securityCheck === true) {
+    // necessary inputs
+    const nftId = req.body.assetId;
+    const AlgorandAddress = req.body.cardanoAddress;
+    const EthereumAddress = req.body.ethereumAddress;
+    const Time = req.body.time;
+    const ExchangeRate = req.body.exchangeRate;
+    const Amount = req.body.amount;
+    if (
+      nftId !== undefined &&
+      AlgorandAddress !== undefined &&
+      EthereumAddress !== undefined &&
+      Time !== undefined &&
+      ExchangeRate !== undefined &&
+      Amount !== undefined
+    ) {
+      const fun = (obj) => {
+        res.send(obj);
+      };
+      // mint process
+      main(
+        {
+          nftId,
+          AlgorandAddress,
+          EthereumAddress,
+          Time,
+          ExchangeRate,
+          Amount,
+        },
+        fun
+      );
+    } else {
+      // error response 400 (invalide input)
+      const errorResponse = {
+        message: "Invalide Input",
+      };
+
+      res.status(500).send(errorResponse);
+    }
+  } else {
+    // unauthorized response 401 (unauthorized)
+    const unauthorizedResponse = {
+      message: "Unauthorized",
+    };
+    res.status(401).send(unauthorizedResponse);
+  }
+});
+
 // get server status
 expressApp.get("/online", function (req, res) {
   const obj = {
