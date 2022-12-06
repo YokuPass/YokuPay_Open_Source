@@ -1,0 +1,30 @@
+{"abi": [
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "NFTcontract",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "marketID",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "NFTid",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "customer",
+				"type": "address"
+			}
+		],
+		"name": "buyNFT",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	}
+]}
