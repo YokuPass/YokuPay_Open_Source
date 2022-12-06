@@ -1,0 +1,30 @@
+{
+  "name": "test-for-tests",
+  "version": "1.0.0",
+  "description": "",
+  "main": "test.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@alch/alchemy-web3": "^1.4.6",
+    "@binance/connector": "^1.13.0",
+    "@emurgo/cardano-serialization-lib-nodejs": "^11.0.5",
+    "@thetalabs/theta-js": "^0.0.69",
+    "@truffle/hdwallet-provider": "^2.0.14",
+    "abi-decoder": "^2.4.0",
+    "axios": "^0.27.2",
+    "cron": "^2.1.0",
+    "dotenv": "^16.0.2",
+    "fs": "^0.0.1-security",
+    "lucid-cardano": "^0.3.5",
+    "moralis": "^2.4.0",
+    "node-cron": "^3.0.2",
+    "node-fetch": "^3.2.10",
+    "pg": "^8.8.0",
+    "pool": "^0.4.1",
+    "web3": "^1.8.0"
+  }
+}
