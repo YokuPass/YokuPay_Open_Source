@@ -1,5 +1,8 @@
 // const jpg_checkWallet = require("./src/function/jpg_checkWallet").checkWallet;
-const opentheta_checkWallet = require("./src/function/openTheta_checkWallet").checkWallet;
+const opentheta_checkWallet =
+  require("./src/function/openTheta_checkWallet").checkWallet;
+const algorand_checkWallet =
+  require("./src/function/algorand_checkWallet").algorand_checkWallet;
 
 const express = require("express");
 const cors = require("cors");
@@ -57,23 +60,22 @@ app.use(cors());
 //   });
 // });
 
-
 // OpenTheta External Adapters
 
-// Main Endpoint 
-app.post("/payment/opentheta/checkwallet", (req,res) => { 
+// Main Endpoint
+app.post("/payment/opentheta/checkwallet", (req, res) => {
   opentheta_checkWallet(req.body, (status, result) => {
     if (result) {
-      res.status(status).json(result)
+      res.status(status).json(result);
     }
-  })
-})
+  });
+});
 
 // Endpoint 1
 app.post("/buyNFT", (req, res) => {
   opentheta_checkWallet(req.body, (status, result) => {
     if (result) {
-      res.json(result);
+      res.status(status).json(result);
     }
   });
 });
@@ -82,7 +84,7 @@ app.post("/buyNFT", (req, res) => {
 app.post("/buyNFT_1", (req, res) => {
   opentheta_checkWallet(req.body, (status, result) => {
     if (result) {
-      res.json(result);
+      res.status(status).json(result);
     }
   });
 });
@@ -91,7 +93,7 @@ app.post("/buyNFT_1", (req, res) => {
 app.post("/buyNFT_2", (req, res) => {
   opentheta_checkWallet(req.body, (status, result) => {
     if (result) {
-      res.json(result);
+      res.status(status).json(result);
     }
   });
 });
@@ -100,7 +102,7 @@ app.post("/buyNFT_2", (req, res) => {
 app.post("/buyNFT_3", (req, res) => {
   opentheta_checkWallet(req.body, (status, result) => {
     if (result) {
-      res.json(result);
+      res.status(status).json(result);
     }
   });
 });
@@ -109,7 +111,63 @@ app.post("/buyNFT_3", (req, res) => {
 app.post("/buyNFT_4", (req, res) => {
   opentheta_checkWallet(req.body, (status, result) => {
     if (result) {
-      res.json(result);
+      res.status(status).json(result);
+    }
+  });
+});
+
+// Algorand Endpoints
+
+// Main Endpoint
+app.post("/payment/algorand/checkwallet", (req, res) => {
+  algorand_checkWallet(req.body, (status, result) => {
+    if (result) {
+      res.status(status).json(result);
+    }
+  });
+});
+
+// Endpoint 1
+app.post("/payment/algorand/checkwallet/1", (req, res) => {
+  algorand_checkWallet(req.body, (status, result) => {
+    if (result) {
+      res.status(status).json(result);
+    }
+  });
+});
+
+// Endpoint 2
+app.post("/payment/algorand/checkwallet/2", (req, res) => {
+  algorand_checkWallet(req.body, (status, result) => {
+    if (result) {
+      res.status(status).json(result);
+    }
+  });
+});
+
+// Endpoint 3
+app.post("/payment/algorand/checkwallet/3", (req, res) => {
+  algorand_checkWallet(req.body, (status, result) => {
+    if (result) {
+      res.status(status).json(result);
+    }
+  });
+});
+
+// Endpoint 4
+app.post("/payment/algorand/checkwallet/4", (req, res) => {
+  algorand_checkWallet(req.body, (status, result) => {
+    if (result) {
+      res.status(status).json(result);
+    }
+  });
+});
+
+// Endpoint 5
+app.post("/payment/algorand/checkwallet/5", (req, res) => {
+  algorand_checkWallet(req.body, (status, result) => {
+    if (result) {
+      res.status(status).json(result);
     }
   });
 });
