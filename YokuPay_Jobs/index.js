@@ -57,7 +57,7 @@ expressApp.post("/yokupay/jpg/checkUTXO", async function (req, res) {
   const securityCheck = await checkToken(req);
   if (securityCheck === true) {
     const transactionHash = req.body.transactionHash;
-    const assetID = req.body.assetID;
+    const assetID = req.body.nftID;
     const user = req.body.ethereumAddress;
     if (
       transactionHash !== undefined &&
@@ -103,11 +103,11 @@ expressApp.post("/yokupay/opentheta/checkUTXO", async function (req, res) {
   const securityCheck = await checkToken(req);
   if (securityCheck === true) {
     const transactionHash = req.body.transactionHash;
-    const marketID = req.body.marketID;
+    const marketID = req.body.nftID;
     const user = req.body.ethereumAddress;
     console.log(
       req.body.transactionHash,
-      req.body.marketID,
+      req.body.nftID,
       req.body.ethereumAddress
     );
     if (
@@ -154,11 +154,11 @@ expressApp.post("/yokupay/algorand/checkUTXO", async function (req, res) {
   const securityCheck = await checkToken(req);
   if (securityCheck === true) {
     const transactionHash = req.body.transactionHash;
-    const nftId = req.body.nftId;
+    const nftId = req.body.nftID;
     const user = req.body.ethereumAddress;
     console.log(
       req.body.transactionHash,
-      req.body.nftId,
+      req.body.nftID,
       req.body.ethereumAddress
     );
     if (

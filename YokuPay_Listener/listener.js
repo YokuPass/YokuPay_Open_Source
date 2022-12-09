@@ -263,10 +263,9 @@ async function purchaseJPG() {
           assetID: AssetID,
           outputAddress
         });
-//          ************************* EDIT **************************
         var config = {
           method: "post",
-          url: `http://23.88.50.29:4479/internal/jpg/nft/purchase`,
+          url: `http://23.88.50.29:4788/cardanoNode/buyNFT`,
           headers: {
             Authorization: process.env.REACT_APP_BEAR,
             "Content-Type": "application/x-www-form-urlencoded",
@@ -321,7 +320,7 @@ async function getNFTData(hash) {
 async function sendToJobs(billingNFT, marketID, payAddress, database) {
   var data = qs.stringify({
     transactionHash: billingNFT,
-    marketID,
+    nftID: marketID,
     ethereumAddress: payAddress,
   });
 
