@@ -1,5 +1,4 @@
 const express = require("express");
-const axios = require("axios");
 var fs = require("fs");
 
 const sendNFT = require("./sendNFT").sendNFT;
@@ -23,14 +22,14 @@ app.post("/cardanoNode/buyNFT", (req, res) => {
   const purchaseID = genID(16);
 
   const transactionSuccess = (obj) => {
-    console.log("Successful: ", obj)
+    console.log("Successful: ", obj);
     res.status(obj.status).send({
       data: obj.message,
     });
     return;
   };
   const transactionError = (obj) => {
-    console.log("Error: ", obj)
+    console.log("Error: ", obj);
     res.status(obj.status).send({
       data: obj.message,
     });
@@ -107,10 +106,7 @@ app.post("/cardanoNode/buyNFT", (req, res) => {
                                 console.log("Error: ", stderr);
                               } else {
                                 console.log("UTXO Output: ", stdout, stderr);
-                                const TXres = transactionHash.replace(
-                                  /"/g,
-                                  ""
-                                );
+                                const TXres = transactionHash.replace(/"/g, "");
                                 if (TXres.length >= 66) {
                                   res
                                     .status(400)
@@ -149,11 +145,11 @@ async function sendLoop(
   transactionError
 ) {
   for (let index = 0; index < 4; index++) {
-    console.log(index)
+    console.log(index);
     const transactionErrorLoop = (obj) => {
-      console.log(obj, "", index)
-    }
-    
+      console.log(obj, "", index);
+    };
+
     if (index === 0) {
       setTimeout(function () {
         // Code, der erst nach 1 Min ausgeführt wird

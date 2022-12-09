@@ -263,7 +263,7 @@ async function purchaseJPG() {
           assetID: AssetID,
           outputAddress
         });
-
+//          ************************* EDIT **************************
         var config = {
           method: "post",
           url: `http://23.88.50.29:4479/internal/jpg/nft/purchase`,

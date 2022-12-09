@@ -216,7 +216,6 @@ expressApp.listen(port, () => {
   console.log(`Listening on Port ${port}`);
   jpg_job.start();
   opentheta_job.start();
-  algorand_job.start();
 });
 
 const jpg_job = new CronJob("1 * * * * *", async function () {
